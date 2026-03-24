@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raja Kumar - Secure Bot Panel</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a1a; color: white; text-align: center; padding: 20px; }
+        .card { background: #2d2d2d; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); max-width: 400px; margin: auto; }
+        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; }
+        button { width: 95%; padding: 12px; background: #0088cc; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        button:hover { background: #006699; }
+        .status { margin-top: 15px; color: #ffcc00; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <h2>डिजिटल मास्टर हब - कंट्रोल पैनल</h2>
+    
+    <div class="card">
+        <p>अपनी गुप्त चाबी (Token) यहाँ डालें:</p>
+        <input type="password" id="botToken" placeholder="यहाँ Bot Token पेस्ट करें..." value="">
+        
+        <p>वीडियो चुनें:</p>
+        <input type="file" id="videoFile" accept="video/*">
+        
+        <button onclick="sendVideo()">चैनल पर भेजें</button>
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        async function sendVideo() {
+            const token = document.getElementById('botToken').value;
+            const fileInput = document.getElementById('videoFile');
+            const status = document.getElementById('status');
+            const chatId = "-1002341496946"; // आपका चैनल ID
+
+            if(!token) { alert("राजा भाई, पहले अपनी चाबी तो डालिए!"); return; }
+            if(fileInput.files.length === 0) { alert("कोई वीडियो तो चुनिए!"); return; }
+
+            status.innerText = "अपलोडिंग शुरू... कृपया इंतज़ार करें राजा भाई।";
+
+            const formData = new FormData();
+            formData.append("video", fileInput.files[0]);
+            formData.append("chat_id", chatId);
+            formData.append("caption", "राजा भाई के बोट द्वारा अपलोड किया गया ✅");
+
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${token}/sendVideo`, {
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await response.json();
+                if(result.ok) {
+                    status.innerText = "✅ सफलता! वीडियो आपके चैनल पर पहुँच गया।";
+                    alert("काम हो गया राजा भाई!");
+                } else {
+                    status.innerText = "❌ गड़बड़: " + result.description;
+                }
+            } catch (error) {
+                status.innerText = "❌ नेटवर्क एरर! चेक करें इंटरनेट चल रहा है?";
+            }
+        }
+    </script>
+
+</body>
+</html>
